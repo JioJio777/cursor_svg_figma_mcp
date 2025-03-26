@@ -1,7 +1,7 @@
 <svg width="393" height="852" viewBox="0 0 393 852" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="393" height="852" fill="#FFFFFF"/>
+<rect width="393" height="852" fill="#F5F5F5"/>
 <g id="ecommerce_homepage" clip-path="url(#clip0_0_1)">
-<path id="Vector" d="M393 0H0V852H393V0Z" fill="#FFFFFF"/>
+<path id="Vector" d="M393 0H0V852H393V0Z" fill="white"/>
 <g id="Clip path group">
 <mask id="mask0_0_1" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="393" height="852">
 <g id="clip0_0_1">
@@ -10,15 +10,28 @@
 </mask>
 <g mask="url(#mask0_0_1)">
 <g id="ecommerce_homepage_2">
-<path id="Vector_3" d="M393 0H0V852H393V0Z" fill="url(#paint0_linear_0_1)"/>
-<path id="Vector_2_2" opacity="0.1" d="M0 120H393" stroke="#303042" stroke-width="0.5"/>
-<path id="Vector_3_2" opacity="0.1" d="M0 240H393" stroke="#303042" stroke-width="0.5"/>
+<path id="Vector_3" d="M393 0H0V852H393V0Z" fill="white"/>
+<g id="Clip path group_2">
+<g id="Mask group">
+<mask id="mask1_0_1" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="393" height="852">
+<g id="Group">
+<g id="clip0_0_1_2">
+<path id="Vector_2_2" d="M393 0H0V852H393V0Z" fill="white"/>
+</g>
+</g>
+</mask>
+<g mask="url(#mask1_0_1)">
+<g id="Group_2">
+<g id="ecommerce_homepage_2_2">
+<path id="Vector_3_2" d="M393 0H0V852H393V0Z" fill="url(#paint0_linear_0_1)"/>
+<path id="Vector_2_2_2" opacity="0.1" d="M0 120H393" stroke="#303042" stroke-width="0.5"/>
+<path id="Vector_3_2_2" opacity="0.1" d="M0 240H393" stroke="#303042" stroke-width="0.5"/>
 <path id="Vector_4" opacity="0.1" d="M0 360H393" stroke="#303042" stroke-width="0.5"/>
 <path id="Vector_5" opacity="0.1" d="M0 480H393" stroke="#303042" stroke-width="0.5"/>
 <path id="Vector_6" opacity="0.1" d="M0 600H393" stroke="#303042" stroke-width="0.5"/>
 <path id="Vector_7" opacity="0.1" d="M0 720H393" stroke="#303042" stroke-width="0.5"/>
 <path id="Vector_8" d="M393 54H0V114H393V54Z" fill="url(#paint1_linear_0_1)"/>
-<text id="ShopEasy" fill="#0000FF" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="24" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="24" y="90.0624">ShopEasy</tspan></text>
+<text id="ShopEasy" fill="#0000FF" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="24" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="24" y="89.0937">ShopEasy</tspan></text>
 <g id="shoppingBag">
 <path id="Vector_9" d="M340 82V80C340 77.2386 342.239 75 345 75C347.761 75 350 77.2386 350 80V82M337 82H353L354 93H336L337 82Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
@@ -27,18 +40,22 @@
 <path id="Vector_11" d="M46 165C49.866 165 53 161.866 53 158C53 154.134 49.866 151 46 151C42.134 151 39 154.134 39 158C39 161.866 42.134 165 46 165Z" stroke="#6C757D" stroke-width="2"/>
 <path id="Vector_12" d="M55 167L51 163" stroke="#6C757D" stroke-width="2" stroke-linecap="round"/>
 </g>
-<text id="Search products..." fill="#6C757D" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="16" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="70" y="164.376">Search products...</tspan></text>
+<text id="Search products..." fill="#6C757D" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="16" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="70" y="163.564">Search products...</tspan></text>
 <path id="Vector_13" d="M358 204H35C26.7157 204 20 210.716 20 219V369C20 377.284 26.7157 384 35 384H358C366.284 384 373 377.284 373 369V219C373 210.716 366.284 204 358 204Z" fill="url(#paint2_linear_0_1)"/>
 <path id="Vector_14" opacity="0.3" d="M50 314C83.1371 314 110 287.137 110 254C110 220.863 83.1371 194 50 194C16.8629 194 -10 220.863 -10 254C-10 287.137 16.8629 314 50 314Z" fill="#5C7CFA"/>
 <path id="Vector_15" opacity="0.2" d="M323 274C345.091 274 363 256.091 363 234C363 211.909 345.091 194 323 194C300.909 194 283 211.909 283 234C283 256.091 300.909 274 323 274Z" fill="#339AF0"/>
 <path id="Vector_16" opacity="0.2" d="M293 364C309.569 364 323 350.569 323 334C323 317.431 309.569 304 293 304C276.431 304 263 317.431 263 334C263 350.569 276.431 364 293 364Z" fill="#339AF0"/>
-<g id="Clip path group_2">
-<mask id="mask1_0_1" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="20" y="204" width="350" height="180">
+<g id="Clip path group_2_2">
+<g id="Mask group_2">
+<mask id="mask2_0_1" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="20" y="204" width="350" height="180">
+<g id="Group_3">
 <g id="clip1_0_1">
 <path id="Vector_17" d="M370 204H20V384H370V204Z" fill="white"/>
 </g>
+</g>
 </mask>
-<g mask="url(#mask1_0_1)">
+<g mask="url(#mask2_0_1)">
+<g id="Group_4">
 <g id="bannerElements">
 <path id="Vector_17_2" opacity="0.3" d="M290 234C320 244 340 294 320 354" stroke="white" stroke-width="2"/>
 <path id="Vector_18" opacity="0.3" d="M270 254C300 264 320 314 300 374" stroke="white" stroke-width="2"/>
@@ -55,11 +72,13 @@
 </g>
 </g>
 </g>
-<text id="Summer Sale" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="24" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="40" y="252.062">Summer Sale</tspan></text>
-<text id="50% OFF" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="36" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="40" y="280.594">50% OFF</tspan></text>
+</g>
+</g>
+<text id="Summer Sale" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="24" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="40" y="251.093">Summer Sale</tspan></text>
+<text id="50% OFF" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="36" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="40" y="278.891">50% OFF</tspan></text>
 <path id="Vector_29" d="M150 299H60C48.9543 299 40 307.954 40 319C40 330.046 48.9543 339 60 339H150C161.046 339 170 330.046 170 319C170 307.954 161.046 299 150 299Z" fill="white"/>
-<text id="SHOP NOW" fill="#4263EB" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="59" y="327.188">SHIP Now</tspan></text>
-<text id="Shop by Category" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="20" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="20" y="422.218">Shop by Category</tspan></text>
+<text id="SHOP NOW" fill="#4263EB" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="59" y="326.375">SHIP Now</tspan></text>
+<text id="Shop by Category" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="20" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="20" y="421.327">Shop by Category</tspan></text>
 <path id="Vector_30" d="M91 444H30C24.4772 444 20 448.477 20 454V534C20 539.523 24.4772 544 30 544H91C96.5229 544 101 539.523 101 534V454C101 448.477 96.5229 444 91 444Z" fill="url(#paint3_linear_0_1)"/>
 <path id="Vector_31" opacity="0.5" d="M60.5 514C77.0685 514 90.5 500.569 90.5 484C90.5 467.431 77.0685 454 60.5 454C43.9315 454 30.5 467.431 30.5 484C30.5 500.569 43.9315 514 60.5 514Z" fill="#2A1212"/>
 <g id="fashionIcon">
@@ -68,10 +87,10 @@
 <path id="Vector_34" d="M51.5 492C51.5 492 54.5 497 60.5 497C66.5 497 69.5 492 69.5 492" stroke="url(#paint6_linear_0_1)" stroke-width="2"/>
 <path id="Vector_35" d="M60.5 469C62.1569 469 63.5 467.657 63.5 466C63.5 464.343 62.1569 463 60.5 463C58.8431 463 57.5 464.343 57.5 466C57.5 467.657 58.8431 469 60.5 469Z" fill="url(#paint7_linear_0_1)"/>
 </g>
-<text id="Fashion" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="34.8994" y="522.954">Fashion</tspan></text>
+<text id="Fashion" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="34.8994" y="522.431">Fashion</tspan></text>
 <path id="Vector_36" d="M182 444H121C115.477 444 111 448.477 111 454V534C111 539.523 115.477 544 121 544H182C187.523 544 192 539.523 192 534V454C192 448.477 187.523 444 182 444Z" fill="url(#paint8_linear_0_1)"/>
 <path id="Vector_37" opacity="0.5" d="M151.5 514C168.069 514 181.5 500.569 181.5 484C181.5 467.431 168.069 454 151.5 454C134.931 454 121.5 467.431 121.5 484C121.5 500.569 134.931 514 151.5 514Z" fill="#122310"/>
-<text id="Tech" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="135.777" y="522.954">Tech</tspan></text>
+<text id="Tech" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="135.777" y="522.431">Tech</tspan></text>
 <path id="Vector_43" d="M273 444H212C206.477 444 202 448.477 202 454V534C202 539.523 206.477 544 212 544H273C278.523 544 283 539.523 283 534V454C283 448.477 278.523 444 273 444Z" fill="url(#paint9_linear_0_1)"/>
 <path id="Vector_44" opacity="0.5" d="M242.5 514C259.069 514 272.5 500.569 272.5 484C272.5 467.431 259.069 454 242.5 454C225.931 454 212.5 467.431 212.5 484C212.5 500.569 225.931 514 242.5 514Z" fill="#2A2511"/>
 <g id="homeIcon">
@@ -79,7 +98,7 @@
 <path id="Vector_46" opacity="0.8" d="M151 530H141V540H151V530Z" fill="#FFF9DB"/>
 <path id="Vector_47" d="M148 530H144V537H148V530Z" fill="url(#paint11_linear_0_1)"/>
 </g>
-<text id="Home" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="223.045" y="522.954">Home</tspan></text>
+<text id="Home" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="223.045" y="522.431">Home</tspan></text>
 <path id="Vector_48" d="M363 444H303C297.477 444 293 448.477 293 454V534C293 539.523 297.477 544 303 544H363C368.523 544 373 539.523 373 534V454C373 448.477 368.523 444 363 444Z" fill="url(#paint12_linear_0_1)"/>
 <path id="Vector_49" opacity="0.5" d="M333 514C349.569 514 363 500.569 363 484C363 467.431 349.569 454 333 454C316.431 454 303 467.431 303 484C303 500.569 316.431 514 333 514Z" fill="#0E1A25"/>
 <g id="beautyIcon">
@@ -88,8 +107,8 @@
 <path id="Vector_52" opacity="0.8" d="M333 476C334.657 476 336 475.105 336 474C336 472.895 334.657 472 333 472C331.343 472 330 472.895 330 474C330 475.105 331.343 476 333 476Z" fill="#E7F5FF"/>
 <path id="Vector_53" d="M334 497H332V502H334V497Z" fill="url(#paint15_linear_0_1)"/>
 </g>
-<text id="Beauty" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="310.1" y="522.954">Beauty</tspan></text>
-<text id="Deal of the Day" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="20" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="20" y="582.218">Deal of the Day</tspan></text>
+<text id="Beauty" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-style="italic" font-weight="200" letter-spacing="0em"><tspan x="310.1" y="522.431">Beauty</tspan></text>
+<text id="Deal of the Day" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="20" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="20" y="581.327">Deal of the Day</tspan></text>
 <path id="Vector_54" d="M363 604H30C24.4772 604 20 608.477 20 614V714C20 719.523 24.4772 724 30 724H363C368.523 724 373 719.523 373 714V614C373 608.477 368.523 604 363 604Z" fill="url(#paint16_linear_0_1)"/>
 <path id="Vector_55" d="M120 619H40C37.2386 619 35 621.239 35 624V704C35 706.761 37.2386 709 40 709H120C122.761 709 125 706.761 125 704V624C125 621.239 122.761 619 120 619Z" fill="#1E1E28"/>
 <g id="headphonesImage">
@@ -105,12 +124,14 @@
 <path id="Vector_65" opacity="0.9" d="M105 678C107.209 678 109 676.209 109 674C109 671.791 107.209 670 105 670C102.791 670 101 671.791 101 674C101 676.209 102.791 678 105 678Z" fill="#E7F5FF"/>
 </g>
 <path id="Vector_66" d="M45 654C56.0457 654 65 645.046 65 634C65 622.954 56.0457 614 45 614C33.9543 614 25 622.954 25 634C25 645.046 33.9543 654 45 654Z" fill="url(#paint21_linear_0_1)"/>
-<text id="-40%" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="27.6445" y="637.532">-40%</tspan></text>
-<text id="Wireless Headphones" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="18" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="145" y="641.796">Wireless Headphones</tspan></text>
-<text id="$89.99" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="20" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="145" y="672.218">$89.99</tspan></text>
-<text id="$149.99" fill="#868E96" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="16" font-style="italic" font-weight="200" letter-spacing="0em" text-decoration="line-through"><tspan x="220" y="672.375">$149.99</tspan></text>
+<text id="-40%" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="27.6445" y="636.798">-40%</tspan></text>
+<text id="Wireless Headphones" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="18" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="145" y="640.694">Wireless Headphones</tspan></text>
+<text id="$89.99" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Display" font-size="20" font-style="italic" font-weight="bold" letter-spacing="0em"><tspan x="145" y="671.327">$89.99</tspan></text>
+<text id="$149.99" fill="#868E96" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="16" font-style="italic" font-weight="200" letter-spacing="0em" text-decoration="line-through"><tspan x="220" y="671.562">$149.99</tspan></text>
 <path id="Vector_67" d="M247.5 689H162.5C152.835 689 145 696.835 145 706.5C145 716.165 152.835 724 162.5 724H247.5C257.165 724 265 716.165 265 706.5C265 696.835 257.165 689 247.5 689Z" fill="url(#paint22_linear_0_1)"/>
-<text id="Add to Cart" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-weight="bold" letter-spacing="0em"><tspan x="175" y="710.954">Add to Cart</tspan></text>
+<text id="Add to Cart" fill="white" xml:space="preserve" style="white-space: pre" font-family="SF Pro Text" font-size="14" font-weight="bold" letter-spacing="0em"><tspan x="175" y="710.431">Add to Cart</tspan></text>
+</g>
+</g>
 </g>
 </g>
 </g>
@@ -120,6 +141,9 @@
 <path id="Vector_40" d="M213 321H205C204.448 321 204 321.448 204 322V323C204 323.552 204.448 324 205 324H213C213.552 324 214 323.552 214 323V322C214 321.448 213.552 321 213 321Z" fill="url(#paint25_linear_0_1)"/>
 <path id="Vector_41" opacity="0.8" d="M218 306H200C199.448 306 199 306.448 199 307V316C199 316.552 199.448 317 200 317H218C218.552 317 219 316.552 219 316V307C219 306.448 218.552 306 218 306Z" fill="#D3F9D8"/>
 <path id="Vector_42" d="M209 332C210.105 332 211 331.105 211 330C211 328.895 210.105 328 209 328C207.895 328 207 328.895 207 330C207 331.105 207.895 332 209 332Z" fill="url(#paint26_linear_0_1)"/>
+</g>
+</g>
+</g>
 </g>
 </g>
 <defs>

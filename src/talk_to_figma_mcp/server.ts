@@ -171,228 +171,228 @@ server.tool(
 );
 
 // Create Rectangle Tool
-server.tool(
-  "create_rectangle",
-  "Create a new rectangle in Figma",
-  {
-    x: z.number().describe("X position"),
-    y: z.number().describe("Y position"),
-    width: z.number().describe("Width of the rectangle"),
-    height: z.number().describe("Height of the rectangle"),
-    name: z.string().optional().describe("Optional name for the rectangle"),
-    parentId: z.string().optional().describe("Optional parent node ID to append the rectangle to")
-  },
-  async ({ x, y, width, height, name, parentId }) => {
-    try {
-      const result = await sendCommandToFigma('create_rectangle', {
-        x, y, width, height, name: name || 'Rectangle', parentId
-      });
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Created rectangle "${JSON.stringify(result)}"`
-          }
-        ]
-      }
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error creating rectangle: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "create_rectangle",
+//   "Create a new rectangle in Figma",
+//   {
+//     x: z.number().describe("X position"),
+//     y: z.number().describe("Y position"),
+//     width: z.number().describe("Width of the rectangle"),
+//     height: z.number().describe("Height of the rectangle"),
+//     name: z.string().optional().describe("Optional name for the rectangle"),
+//     parentId: z.string().optional().describe("Optional parent node ID to append the rectangle to")
+//   },
+//   async ({ x, y, width, height, name, parentId }) => {
+//     try {
+//       const result = await sendCommandToFigma('create_rectangle', {
+//         x, y, width, height, name: name || 'Rectangle', parentId
+//       });
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Created rectangle "${JSON.stringify(result)}"`
+//           }
+//         ]
+//       }
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error creating rectangle: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Create Frame Tool
-server.tool(
-  "create_frame",
-  "Create a new frame in Figma",
-  {
-    x: z.number().describe("X position"),
-    y: z.number().describe("Y position"),
-    width: z.number().describe("Width of the frame"),
-    height: z.number().describe("Height of the frame"),
-    name: z.string().optional().describe("Optional name for the frame"),
-    parentId: z.string().optional().describe("Optional parent node ID to append the frame to"),
-    fillColor: z.object({
-      r: z.number().min(0).max(1).describe("Red component (0-1)"),
-      g: z.number().min(0).max(1).describe("Green component (0-1)"),
-      b: z.number().min(0).max(1).describe("Blue component (0-1)"),
-      a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
-    }).optional().describe("Fill color in RGBA format"),
-    strokeColor: z.object({
-      r: z.number().min(0).max(1).describe("Red component (0-1)"),
-      g: z.number().min(0).max(1).describe("Green component (0-1)"),
-      b: z.number().min(0).max(1).describe("Blue component (0-1)"),
-      a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
-    }).optional().describe("Stroke color in RGBA format"),
-    strokeWeight: z.number().positive().optional().describe("Stroke weight")
-  },
-  async ({ x, y, width, height, name, parentId, fillColor, strokeColor, strokeWeight }) => {
-    try {
-      const result = await sendCommandToFigma('create_frame', {
-        x, y, width, height, name: name || 'Frame', parentId,
-        fillColor: fillColor || { r: 1, g: 1, b: 1, a: 1 },
-        strokeColor: strokeColor,
-        strokeWeight: strokeWeight
-      });
-      const typedResult = result as { name: string, id: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Created frame "${typedResult.name}" with ID: ${typedResult.id}. Use the ID as the parentId to appendChild inside this frame.`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error creating frame: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "create_frame",
+//   "Create a new frame in Figma",
+//   {
+//     x: z.number().describe("X position"),
+//     y: z.number().describe("Y position"),
+//     width: z.number().describe("Width of the frame"),
+//     height: z.number().describe("Height of the frame"),
+//     name: z.string().optional().describe("Optional name for the frame"),
+//     parentId: z.string().optional().describe("Optional parent node ID to append the frame to"),
+//     fillColor: z.object({
+//       r: z.number().min(0).max(1).describe("Red component (0-1)"),
+//       g: z.number().min(0).max(1).describe("Green component (0-1)"),
+//       b: z.number().min(0).max(1).describe("Blue component (0-1)"),
+//       a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
+//     }).optional().describe("Fill color in RGBA format"),
+//     strokeColor: z.object({
+//       r: z.number().min(0).max(1).describe("Red component (0-1)"),
+//       g: z.number().min(0).max(1).describe("Green component (0-1)"),
+//       b: z.number().min(0).max(1).describe("Blue component (0-1)"),
+//       a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
+//     }).optional().describe("Stroke color in RGBA format"),
+//     strokeWeight: z.number().positive().optional().describe("Stroke weight")
+//   },
+//   async ({ x, y, width, height, name, parentId, fillColor, strokeColor, strokeWeight }) => {
+//     try {
+//       const result = await sendCommandToFigma('create_frame', {
+//         x, y, width, height, name: name || 'Frame', parentId,
+//         fillColor: fillColor || { r: 1, g: 1, b: 1, a: 1 },
+//         strokeColor: strokeColor,
+//         strokeWeight: strokeWeight
+//       });
+//       const typedResult = result as { name: string, id: string };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Created frame "${typedResult.name}" with ID: ${typedResult.id}. Use the ID as the parentId to appendChild inside this frame.`
+//           }
+//         ]
+//       };
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error creating frame: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Create Text Tool
-server.tool(
-  "create_text",
-  "Create a new text element in Figma",
-  {
-    x: z.number().describe("X position"),
-    y: z.number().describe("Y position"),
-    text: z.string().describe("Text content"),
-    fontSize: z.number().optional().describe("Font size (default: 14)"),
-    fontWeight: z.number().optional().describe("Font weight (e.g., 400 for Regular, 700 for Bold)"),
-    fontColor: z.object({
-      r: z.number().min(0).max(1).describe("Red component (0-1)"),
-      g: z.number().min(0).max(1).describe("Green component (0-1)"),
-      b: z.number().min(0).max(1).describe("Blue component (0-1)"),
-      a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
-    }).optional().describe("Font color in RGBA format"),
-    name: z.string().optional().describe("Optional name for the text node by default following text"),
-    parentId: z.string().optional().describe("Optional parent node ID to append the text to")
-  },
-  async ({ x, y, text, fontSize, fontWeight, fontColor, name, parentId }) => {
-    try {
-      const result = await sendCommandToFigma('create_text', {
-        x, y, text,
-        fontSize: fontSize || 14,
-        fontWeight: fontWeight || 400,
-        fontColor: fontColor || { r: 0, g: 0, b: 0, a: 1 },
-        name: name || 'Text',
-        parentId
-      });
-      const typedResult = result as { name: string, id: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Created text "${typedResult.name}" with ID: ${typedResult.id}`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error creating text: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "create_text",
+//   "Create a new text element in Figma",
+//   {
+//     x: z.number().describe("X position"),
+//     y: z.number().describe("Y position"),
+//     text: z.string().describe("Text content"),
+//     fontSize: z.number().optional().describe("Font size (default: 14)"),
+//     fontWeight: z.number().optional().describe("Font weight (e.g., 400 for Regular, 700 for Bold)"),
+//     fontColor: z.object({
+//       r: z.number().min(0).max(1).describe("Red component (0-1)"),
+//       g: z.number().min(0).max(1).describe("Green component (0-1)"),
+//       b: z.number().min(0).max(1).describe("Blue component (0-1)"),
+//       a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
+//     }).optional().describe("Font color in RGBA format"),
+//     name: z.string().optional().describe("Optional name for the text node by default following text"),
+//     parentId: z.string().optional().describe("Optional parent node ID to append the text to")
+//   },
+//   async ({ x, y, text, fontSize, fontWeight, fontColor, name, parentId }) => {
+//     try {
+//       const result = await sendCommandToFigma('create_text', {
+//         x, y, text,
+//         fontSize: fontSize || 14,
+//         fontWeight: fontWeight || 400,
+//         fontColor: fontColor || { r: 0, g: 0, b: 0, a: 1 },
+//         name: name || 'Text',
+//         parentId
+//       });
+//       const typedResult = result as { name: string, id: string };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Created text "${typedResult.name}" with ID: ${typedResult.id}`
+//           }
+//         ]
+//       };
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error creating text: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Set Fill Color Tool
-server.tool(
-  "set_fill_color",
-  "Set the fill color of a node in Figma can be TextNode or FrameNode",
-  {
-    nodeId: z.string().describe("The ID of the node to modify"),
-    r: z.number().min(0).max(1).describe("Red component (0-1)"),
-    g: z.number().min(0).max(1).describe("Green component (0-1)"),
-    b: z.number().min(0).max(1).describe("Blue component (0-1)"),
-    a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
-  },
-  async ({ nodeId, r, g, b, a }) => {
-    try {
-      const result = await sendCommandToFigma('set_fill_color', {
-        nodeId,
-        color: { r, g, b, a: a || 1 }
-      });
-      const typedResult = result as { name: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Set fill color of node "${typedResult.name}" to RGBA(${r}, ${g}, ${b}, ${a || 1})`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error setting fill color: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "set_fill_color",
+//   "Set the fill color of a node in Figma can be TextNode or FrameNode",
+//   {
+//     nodeId: z.string().describe("The ID of the node to modify"),
+//     r: z.number().min(0).max(1).describe("Red component (0-1)"),
+//     g: z.number().min(0).max(1).describe("Green component (0-1)"),
+//     b: z.number().min(0).max(1).describe("Blue component (0-1)"),
+//     a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)")
+//   },
+//   async ({ nodeId, r, g, b, a }) => {
+//     try {
+//       const result = await sendCommandToFigma('set_fill_color', {
+//         nodeId,
+//         color: { r, g, b, a: a || 1 }
+//       });
+//       const typedResult = result as { name: string };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Set fill color of node "${typedResult.name}" to RGBA(${r}, ${g}, ${b}, ${a || 1})`
+//           }
+//         ]
+//       };
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error setting fill color: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Set Stroke Color Tool
-server.tool(
-  "set_stroke_color",
-  "Set the stroke color of a node in Figma",
-  {
-    nodeId: z.string().describe("The ID of the node to modify"),
-    r: z.number().min(0).max(1).describe("Red component (0-1)"),
-    g: z.number().min(0).max(1).describe("Green component (0-1)"),
-    b: z.number().min(0).max(1).describe("Blue component (0-1)"),
-    a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)"),
-    weight: z.number().positive().optional().describe("Stroke weight")
-  },
-  async ({ nodeId, r, g, b, a, weight }) => {
-    try {
-      const result = await sendCommandToFigma('set_stroke_color', {
-        nodeId,
-        color: { r, g, b, a: a || 1 },
-        weight: weight || 1
-      });
-      const typedResult = result as { name: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Set stroke color of node "${typedResult.name}" to RGBA(${r}, ${g}, ${b}, ${a || 1}) with weight ${weight || 1}`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error setting stroke color: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "set_stroke_color",
+//   "Set the stroke color of a node in Figma",
+//   {
+//     nodeId: z.string().describe("The ID of the node to modify"),
+//     r: z.number().min(0).max(1).describe("Red component (0-1)"),
+//     g: z.number().min(0).max(1).describe("Green component (0-1)"),
+//     b: z.number().min(0).max(1).describe("Blue component (0-1)"),
+//     a: z.number().min(0).max(1).optional().describe("Alpha component (0-1)"),
+//     weight: z.number().positive().optional().describe("Stroke weight")
+//   },
+//   async ({ nodeId, r, g, b, a, weight }) => {
+//     try {
+//       const result = await sendCommandToFigma('set_stroke_color', {
+//         nodeId,
+//         color: { r, g, b, a: a || 1 },
+//         weight: weight || 1
+//       });
+//       const typedResult = result as { name: string };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Set stroke color of node "${typedResult.name}" to RGBA(${r}, ${g}, ${b}, ${a || 1}) with weight ${weight || 1}`
+//           }
+//         ]
+//       };
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error setting stroke color: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Move Node Tool
 server.tool(
@@ -615,102 +615,23 @@ server.tool(
 // );
 
 // Create Component Instance Tool
-server.tool(
-  "create_component_instance",
-  "Create an instance of a component in Figma",
-  {
-    componentKey: z.string().describe("Key of the component to instantiate"),
-    x: z.number().describe("X position"),
-    y: z.number().describe("Y position")
-  },
-  async ({ componentKey, x, y }) => {
-    try {
-      const result = await sendCommandToFigma('create_component_instance', { componentKey, x, y });
-      const typedResult = result as { name: string, id: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Created component instance "${typedResult.name}" with ID: ${typedResult.id}`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error creating component instance: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
-
-// Export Node as Image Tool
-server.tool(
-  "export_node_as_image",
-  "Export a node as an image from Figma",
-  {
-    nodeId: z.string().describe("The ID of the node to export"),
-    format: z.enum(["PNG", "JPG", "SVG", "PDF"]).optional().describe("Export format"),
-    scale: z.number().positive().optional().describe("Export scale")
-  },
-  async ({ nodeId, format, scale }) => {
-    try {
-      const result = await sendCommandToFigma('export_node_as_image', {
-        nodeId,
-        format: format || 'PNG',
-        scale: scale || 1
-      });
-      const typedResult = result as any;
-
-      // return {
-      //   content: [
-      //     {
-      //       type: "image",
-      //       data: typedResult.imageData,
-      //       mimeType: typedResult.mimeType || "image/png"
-      //     }
-      //   ]
-      // };
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(typedResult),
-          }
-        ]
-      }
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error exporting node as image: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
-
-// Execute Figma Code Tool
 // server.tool(
-//   "execute_figma_code",
-//   "Execute arbitrary JavaScript code in Figma (use with caution)",
+//   "create_component_instance",
+//   "Create an instance of a component in Figma",
 //   {
-//     code: z.string().describe("JavaScript code to execute in Figma")
+//     componentKey: z.string().describe("Key of the component to instantiate"),
+//     x: z.number().describe("X position"),
+//     y: z.number().describe("Y position")
 //   },
-//   async ({ code }) => {
+//   async ({ componentKey, x, y }) => {
 //     try {
-//       const result = await sendCommandToFigma('execute_code', { code });
+//       const result = await sendCommandToFigma('create_component_instance', { componentKey, x, y });
+//       const typedResult = result as { name: string, id: string };
 //       return {
 //         content: [
 //           {
 //             type: "text",
-//             text: `Code executed successfully: ${JSON.stringify(result, null, 2)}`
+//             text: `Created component instance "${typedResult.name}" with ID: ${typedResult.id}`
 //           }
 //         ]
 //       };
@@ -719,7 +640,55 @@ server.tool(
 //         content: [
 //           {
 //             type: "text",
-//             text: `Error executing code: ${error instanceof Error ? error.message : String(error)}`
+//             text: `Error creating component instance: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
+
+// Export Node as Image Tool
+// server.tool(
+//   "export_node_as_image",
+//   "Export a node as an image from Figma",
+//   {
+//     nodeId: z.string().describe("The ID of the node to export"),
+//     format: z.enum(["PNG", "JPG", "SVG", "PDF"]).optional().describe("Export format"),
+//     scale: z.number().positive().optional().describe("Export scale")
+//   },
+//   async ({ nodeId, format, scale }) => {
+//     try {
+//       const result = await sendCommandToFigma('export_node_as_image', {
+//         nodeId,
+//         format: format || 'PNG',
+//         scale: scale || 1
+//       });
+//       const typedResult = result as any;
+
+//       // return {
+//       //   content: [
+//       //     {
+//       //       type: "image",
+//       //       data: typedResult.imageData,
+//       //       mimeType: typedResult.mimeType || "image/png"
+//       //     }
+//       //   ]
+//       // };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: JSON.stringify(typedResult),
+//           }
+//         ]
+//       }
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error exporting node as image: ${error instanceof Error ? error.message : String(error)}`
 //           }
 //         ]
 //       };
@@ -728,75 +697,75 @@ server.tool(
 // );
 
 // Set Corner Radius Tool
-server.tool(
-  "set_corner_radius",
-  "Set the corner radius of a node in Figma",
-  {
-    nodeId: z.string().describe("The ID of the node to modify"),
-    radius: z.number().min(0).describe("Corner radius value"),
-    corners: z.array(z.boolean()).length(4).optional().describe("Optional array of 4 booleans to specify which corners to round [topLeft, topRight, bottomRight, bottomLeft]")
-  },
-  async ({ nodeId, radius, corners }) => {
-    try {
-      const result = await sendCommandToFigma('set_corner_radius', {
-        nodeId,
-        radius,
-        corners: corners || [true, true, true, true]
-      });
-      const typedResult = result as { name: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Set corner radius of node "${typedResult.name}" to ${radius}px`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error setting corner radius: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "set_corner_radius",
+//   "Set the corner radius of a node in Figma",
+//   {
+//     nodeId: z.string().describe("The ID of the node to modify"),
+//     radius: z.number().min(0).describe("Corner radius value"),
+//     corners: z.array(z.boolean()).length(4).optional().describe("Optional array of 4 booleans to specify which corners to round [topLeft, topRight, bottomRight, bottomLeft]")
+//   },
+//   async ({ nodeId, radius, corners }) => {
+//     try {
+//       const result = await sendCommandToFigma('set_corner_radius', {
+//         nodeId,
+//         radius,
+//         corners: corners || [true, true, true, true]
+//       });
+//       const typedResult = result as { name: string };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Set corner radius of node "${typedResult.name}" to ${radius}px`
+//           }
+//         ]
+//       };
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error setting corner radius: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Set Text Content Tool
-server.tool(
-  "set_text_content",
-  "Set the text content of an existing text node in Figma",
-  {
-    nodeId: z.string().describe("The ID of the text node to modify"),
-    text: z.string().describe("New text content")
-  },
-  async ({ nodeId, text }) => {
-    try {
-      const result = await sendCommandToFigma('set_text_content', { nodeId, text });
-      const typedResult = result as { name: string };
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Updated text content of node "${typedResult.name}" to "${text}"`
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error setting text content: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
+// server.tool(
+//   "set_text_content",
+//   "Set the text content of an existing text node in Figma",
+//   {
+//     nodeId: z.string().describe("The ID of the text node to modify"),
+//     text: z.string().describe("New text content")
+//   },
+//   async ({ nodeId, text }) => {
+//     try {
+//       const result = await sendCommandToFigma('set_text_content', { nodeId, text });
+//       const typedResult = result as { name: string };
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Updated text content of node "${typedResult.name}" to "${text}"`
+//           }
+//         ]
+//       };
+//     } catch (error) {
+//       return {
+//         content: [
+//           {
+//             type: "text",
+//             text: `Error setting text content: ${error instanceof Error ? error.message : String(error)}`
+//           }
+//         ]
+//       };
+//     }
+//   }
+// );
 
 // Define design strategy prompt
 server.prompt(
@@ -814,70 +783,20 @@ server.prompt(
 1. Start with Document Structure:
    - First use get_document_info() to understand the current document
    - Plan your layout hierarchy before creating elements
-   - Create a main container frame for each screen/section
 
 2. Naming Conventions:
    - Use descriptive, semantic names for all elements
-   - Follow a consistent naming pattern (e.g., "Login Screen", "Logo Container", "Email Input")
+   - Follow a consistent naming pattern
    - Group related elements with meaningful names
 
 3. Layout Hierarchy:
-   - Create parent frames first, then add child elements
-   - For forms/login screens:
-     * Start with the main screen container frame
-     * Create a logo container at the top
-     * Group input fields in their own containers
-     * Place action buttons (login, submit) after inputs
-     * Add secondary elements (forgot password, signup links) last
+   - Organize elements in a logical structure
+   - Group related elements together
 
-4. Input Fields Structure:
-   - Create a container frame for each input field
-   - Include a label text above or inside the input
-   - Group related inputs (e.g., username/password) together
-
-5. Element Creation:
-   - Use create_frame() for containers and input fields
-   - Use create_text() for labels, buttons text, and links
-   - Set appropriate colors and styles:
-     * Use fillColor for backgrounds
-     * Use strokeColor for borders
-     * Set proper fontWeight for different text elements
-
-6. Mofifying existing elements:
-  - use set_text_content() to modify text content.
-
-7. Visual Hierarchy:
-   - Position elements in logical reading order (top to bottom)
-   - Maintain consistent spacing between elements
-   - Use appropriate font sizes for different text types:
-     * Larger for headings/welcome text
-     * Medium for input labels
-     * Standard for button text
-     * Smaller for helper text/links
-
-8. Best Practices:
-   - Verify each creation with get_node_info()
-   - Use parentId to maintain proper hierarchy
-   - Group related elements together in frames
-   - Keep consistent spacing and alignment
-
-Example Login Screen Structure:
-- Login Screen (main frame)
-  - Logo Container (frame)
-    - Logo (image/text)
-  - Welcome Text (text)
-  - Input Container (frame)
-    - Email Input (frame)
-      - Email Label (text)
-      - Email Field (frame)
-    - Password Input (frame)
-      - Password Label (text)
-      - Password Field (frame)
-  - Login Button (frame)
-    - Button Text (text)
-  - Helper Links (frame)
-    - Forgot Password (text)
-    - Don't have account (text)`
+4. Best Practices:
+   - Verify elements with get_node_info()
+   - Maintain proper hierarchy
+   - Keep consistent spacing and alignment`
           }
         }
       ],
@@ -891,24 +810,28 @@ type FigmaCommand =
   | 'get_document_info'
   | 'get_selection'
   | 'get_node_info'
-  | 'create_rectangle'
-  | 'create_frame'
-  | 'create_text'
-  | 'set_fill_color'
-  | 'set_stroke_color'
   | 'move_node'
   | 'resize_node'
   | 'delete_node'
   | 'get_styles'
   | 'get_local_components'
   | 'get_team_components'
-  | 'create_component_instance'
-  | 'export_node_as_image'
   | 'execute_code'
   | 'join'
-  | 'set_corner_radius'
-  | 'set_text_content'
-  | 'clone_node';
+  | 'clone_node'
+  | 'import_svg'
+  | 'export_current_page_as_svg'
+  // Removed the following commands
+  // | 'create_rectangle'
+  // | 'create_frame'
+  // | 'create_text'
+  // | 'set_fill_color'
+  // | 'set_stroke_color'
+  // | 'create_component_instance'
+  // | 'export_node_as_image'
+  // | 'set_corner_radius'
+  // | 'set_text_content'
+  ;
 
 // Update the connectToFigma function
 function connectToFigma(port: number = 3055) {

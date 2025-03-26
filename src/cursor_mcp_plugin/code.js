@@ -137,16 +137,6 @@ async function handleCommand(command, params) {
         throw new Error("Missing or invalid nodeIds parameter");
       }
       return await getNodesInfo(params.nodeIds);
-    case "create_rectangle":
-      return await createRectangle(params);
-    case "create_frame":
-      return await createFrame(params);
-    case "create_text":
-      return await createText(params);
-    case "set_fill_color":
-      return await setFillColor(params);
-    case "set_stroke_color":
-      return await setStrokeColor(params);
     case "move_node":
       return await moveNode(params);
     case "resize_node":
@@ -157,16 +147,6 @@ async function handleCommand(command, params) {
       return await getStyles();
     case "get_local_components":
       return await getLocalComponents();
-    // case "get_team_components":
-    //   return await getTeamComponents();
-    case "create_component_instance":
-      return await createComponentInstance(params);
-    case "export_node_as_image":
-      return await exportNodeAsImage(params);
-    case "set_corner_radius":
-      return await setCornerRadius(params);
-    case "set_text_content":
-      return await setTextContent(params);
     case "clone_node":
       return await cloneNode(params);
     case "import_svg":
@@ -260,328 +240,6 @@ async function getNodesInfo(nodeIds) {
   } catch (error) {
     throw new Error(`Error getting nodes info: ${error.message}`);
   }
-}
-
-async function createRectangle(params) {
-  const {
-    x = 0,
-    y = 0,
-    width = 100,
-    height = 100,
-    name = "Rectangle",
-    parentId,
-  } = params || {};
-
-  const rect = figma.createRectangle();
-  rect.x = x;
-  rect.y = y;
-  rect.resize(width, height);
-  rect.name = name;
-
-  // If parentId is provided, append to that node, otherwise append to current page
-  if (parentId) {
-    const parentNode = await figma.getNodeByIdAsync(parentId);
-    if (!parentNode) {
-      throw new Error(`Parent node not found with ID: ${parentId}`);
-    }
-    if (!("appendChild" in parentNode)) {
-      throw new Error(`Parent node does not support children: ${parentId}`);
-    }
-    parentNode.appendChild(rect);
-  } else {
-    figma.currentPage.appendChild(rect);
-  }
-
-  return {
-    id: rect.id,
-    name: rect.name,
-    x: rect.x,
-    y: rect.y,
-    width: rect.width,
-    height: rect.height,
-    parentId: rect.parent ? rect.parent.id : undefined,
-  };
-}
-
-async function createFrame(params) {
-  const {
-    x = 0,
-    y = 0,
-    width = 100,
-    height = 100,
-    name = "Frame",
-    parentId,
-    fillColor,
-    strokeColor,
-    strokeWeight,
-  } = params || {};
-
-  const frame = figma.createFrame();
-  frame.x = x;
-  frame.y = y;
-  frame.resize(width, height);
-  frame.name = name;
-
-  // Set fill color if provided
-  if (fillColor) {
-    const paintStyle = {
-      type: "SOLID",
-      color: {
-        r: parseFloat(fillColor.r) || 0,
-        g: parseFloat(fillColor.g) || 0,
-        b: parseFloat(fillColor.b) || 0,
-      },
-      opacity: parseFloat(fillColor.a) || 1,
-    };
-    frame.fills = [paintStyle];
-  }
-
-  // Set stroke color and weight if provided
-  if (strokeColor) {
-    const strokeStyle = {
-      type: "SOLID",
-      color: {
-        r: parseFloat(strokeColor.r) || 0,
-        g: parseFloat(strokeColor.g) || 0,
-        b: parseFloat(strokeColor.b) || 0,
-      },
-      opacity: parseFloat(strokeColor.a) || 1,
-    };
-    frame.strokes = [strokeStyle];
-  }
-
-  // Set stroke weight if provided
-  if (strokeWeight !== undefined) {
-    frame.strokeWeight = strokeWeight;
-  }
-
-  // If parentId is provided, append to that node, otherwise append to current page
-  if (parentId) {
-    const parentNode = await figma.getNodeByIdAsync(parentId);
-    if (!parentNode) {
-      throw new Error(`Parent node not found with ID: ${parentId}`);
-    }
-    if (!("appendChild" in parentNode)) {
-      throw new Error(`Parent node does not support children: ${parentId}`);
-    }
-    parentNode.appendChild(frame);
-  } else {
-    figma.currentPage.appendChild(frame);
-  }
-
-  return {
-    id: frame.id,
-    name: frame.name,
-    x: frame.x,
-    y: frame.y,
-    width: frame.width,
-    height: frame.height,
-    fills: frame.fills,
-    strokes: frame.strokes,
-    strokeWeight: frame.strokeWeight,
-    parentId: frame.parent ? frame.parent.id : undefined,
-  };
-}
-
-async function createText(params) {
-  const {
-    x = 0,
-    y = 0,
-    text = "Text",
-    fontSize = 14,
-    fontWeight = 400,
-    fontColor = { r: 0, g: 0, b: 0, a: 1 }, // Default to black
-    name = "Text",
-    parentId,
-  } = params || {};
-
-  // Map common font weights to Figma font styles
-  const getFontStyle = (weight) => {
-    switch (weight) {
-      case 100:
-        return "Thin";
-      case 200:
-        return "Extra Light";
-      case 300:
-        return "Light";
-      case 400:
-        return "Regular";
-      case 500:
-        return "Medium";
-      case 600:
-        return "Semi Bold";
-      case 700:
-        return "Bold";
-      case 800:
-        return "Extra Bold";
-      case 900:
-        return "Black";
-      default:
-        return "Regular";
-    }
-  };
-
-  const textNode = figma.createText();
-  textNode.x = x;
-  textNode.y = y;
-  textNode.name = name;
-  try {
-    await figma.loadFontAsync({
-      family: "Inter",
-      style: getFontStyle(fontWeight),
-    });
-    textNode.fontName = { family: "Inter", style: getFontStyle(fontWeight) };
-    textNode.fontSize = parseInt(fontSize);
-  } catch (error) {
-    console.error("Error setting font size", error);
-  }
-  setCharacters(textNode, text);
-
-  // Set text color
-  const paintStyle = {
-    type: "SOLID",
-    color: {
-      r: parseFloat(fontColor.r) || 0,
-      g: parseFloat(fontColor.g) || 0,
-      b: parseFloat(fontColor.b) || 0,
-    },
-    opacity: parseFloat(fontColor.a) || 1,
-  };
-  textNode.fills = [paintStyle];
-
-  // If parentId is provided, append to that node, otherwise append to current page
-  if (parentId) {
-    const parentNode = await figma.getNodeByIdAsync(parentId);
-    if (!parentNode) {
-      throw new Error(`Parent node not found with ID: ${parentId}`);
-    }
-    if (!("appendChild" in parentNode)) {
-      throw new Error(`Parent node does not support children: ${parentId}`);
-    }
-    parentNode.appendChild(textNode);
-  } else {
-    figma.currentPage.appendChild(textNode);
-  }
-
-  return {
-    id: textNode.id,
-    name: textNode.name,
-    x: textNode.x,
-    y: textNode.y,
-    width: textNode.width,
-    height: textNode.height,
-    characters: textNode.characters,
-    fontSize: textNode.fontSize,
-    fontWeight: fontWeight,
-    fontColor: fontColor,
-    fontName: textNode.fontName,
-    fills: textNode.fills,
-    parentId: textNode.parent ? textNode.parent.id : undefined,
-  };
-}
-
-async function setFillColor(params) {
-  console.log("setFillColor", params);
-  const {
-    nodeId,
-    color: { r, g, b, a },
-  } = params || {};
-
-  if (!nodeId) {
-    throw new Error("Missing nodeId parameter");
-  }
-
-  const node = await figma.getNodeByIdAsync(nodeId);
-  if (!node) {
-    throw new Error(`Node not found with ID: ${nodeId}`);
-  }
-
-  if (!("fills" in node)) {
-    throw new Error(`Node does not support fills: ${nodeId}`);
-  }
-
-  // Create RGBA color
-  const rgbColor = {
-    r: parseFloat(r) || 0,
-    g: parseFloat(g) || 0,
-    b: parseFloat(b) || 0,
-    a: parseFloat(a) || 1,
-  };
-
-  // Set fill
-  const paintStyle = {
-    type: "SOLID",
-    color: {
-      r: parseFloat(rgbColor.r),
-      g: parseFloat(rgbColor.g),
-      b: parseFloat(rgbColor.b),
-    },
-    opacity: parseFloat(rgbColor.a),
-  };
-
-  console.log("paintStyle", paintStyle);
-
-  node.fills = [paintStyle];
-
-  return {
-    id: node.id,
-    name: node.name,
-    fills: [paintStyle],
-  };
-}
-
-async function setStrokeColor(params) {
-  const {
-    nodeId,
-    color: { r, g, b, a },
-    weight = 1,
-  } = params || {};
-
-  if (!nodeId) {
-    throw new Error("Missing nodeId parameter");
-  }
-
-  const node = await figma.getNodeByIdAsync(nodeId);
-  if (!node) {
-    throw new Error(`Node not found with ID: ${nodeId}`);
-  }
-
-  if (!("strokes" in node)) {
-    throw new Error(`Node does not support strokes: ${nodeId}`);
-  }
-
-  // Create RGBA color
-  const rgbColor = {
-    r: r !== undefined ? r : 0,
-    g: g !== undefined ? g : 0,
-    b: b !== undefined ? b : 0,
-    a: a !== undefined ? a : 1,
-  };
-
-  // Set stroke
-  const paintStyle = {
-    type: "SOLID",
-    color: {
-      r: rgbColor.r,
-      g: rgbColor.g,
-      b: rgbColor.b,
-    },
-    opacity: rgbColor.a,
-  };
-
-  node.strokes = [paintStyle];
-
-  // Set stroke weight if available
-  if ("strokeWeight" in node) {
-    node.strokeWeight = weight;
-  }
-
-  return {
-    id: node.id,
-    name: node.name,
-    strokes: node.strokes,
-    strokeWeight: "strokeWeight" in node ? node.strokeWeight : undefined,
-  };
 }
 
 async function moveNode(params) {
@@ -740,40 +398,9 @@ async function getLocalComponents() {
 //   }
 // }
 
-async function createComponentInstance(params) {
-  const { componentKey, x = 0, y = 0 } = params || {};
-
-  if (!componentKey) {
-    throw new Error("Missing componentKey parameter");
-  }
-
-  try {
-    const component = await figma.importComponentByKeyAsync(componentKey);
-    const instance = component.createInstance();
-
-    instance.x = x;
-    instance.y = y;
-
-    figma.currentPage.appendChild(instance);
-
-    return {
-      id: instance.id,
-      name: instance.name,
-      x: instance.x,
-      y: instance.y,
-      width: instance.width,
-      height: instance.height,
-      componentId: instance.componentId,
-    };
-  } catch (error) {
-    throw new Error(`Error creating component instance: ${error.message}`);
-  }
-}
-
-async function exportNodeAsImage(params) {
-  const { nodeId, scale = 1 } = params || {};
-
-  const format = "PNG";
+// Add the cloneNode function implementation
+async function cloneNode(params) {
+  const { nodeId, x, y } = params || {};
 
   if (!nodeId) {
     throw new Error("Missing nodeId parameter");
@@ -784,188 +411,98 @@ async function exportNodeAsImage(params) {
     throw new Error(`Node not found with ID: ${nodeId}`);
   }
 
-  if (!("exportAsync" in node)) {
-    throw new Error(`Node does not support exporting: ${nodeId}`);
-  }
+  // Clone the node
+  const clone = node.clone();
 
-  try {
-    const settings = {
-      format: format,
-      constraint: { type: "SCALE", value: scale },
-    };
-
-    const bytes = await node.exportAsync(settings);
-
-    let mimeType;
-    switch (format) {
-      case "PNG":
-        mimeType = "image/png";
-        break;
-      case "JPG":
-        mimeType = "image/jpeg";
-        break;
-      case "SVG":
-        mimeType = "image/svg+xml";
-        break;
-      case "PDF":
-        mimeType = "application/pdf";
-        break;
-      default:
-        mimeType = "application/octet-stream";
+  // If x and y are provided, move the clone to that position
+  if (x !== undefined && y !== undefined) {
+    if (!("x" in clone) || !("y" in clone)) {
+      throw new Error(`Cloned node does not support position: ${nodeId}`);
     }
-
-    // Proper way to convert Uint8Array to base64
-    const base64 = customBase64Encode(bytes);
-    // const imageData = `data:${mimeType};base64,${base64}`;
-
-    return {
-      nodeId,
-      format,
-      scale,
-      mimeType,
-      imageData: base64,
-    };
-  } catch (error) {
-    throw new Error(`Error exporting node as image: ${error.message}`);
-  }
-}
-function customBase64Encode(bytes) {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  let base64 = "";
-
-  const byteLength = bytes.byteLength;
-  const byteRemainder = byteLength % 3;
-  const mainLength = byteLength - byteRemainder;
-
-  let a, b, c, d;
-  let chunk;
-
-  // Main loop deals with bytes in chunks of 3
-  for (let i = 0; i < mainLength; i = i + 3) {
-    // Combine the three bytes into a single integer
-    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-
-    // Use bitmasks to extract 6-bit segments from the triplet
-    a = (chunk & 16515072) >> 18; // 16515072 = (2^6 - 1) << 18
-    b = (chunk & 258048) >> 12; // 258048 = (2^6 - 1) << 12
-    c = (chunk & 4032) >> 6; // 4032 = (2^6 - 1) << 6
-    d = chunk & 63; // 63 = 2^6 - 1
-
-    // Convert the raw binary segments to the appropriate ASCII encoding
-    base64 += chars[a] + chars[b] + chars[c] + chars[d];
+    clone.x = x;
+    clone.y = y;
   }
 
-  // Deal with the remaining bytes and padding
-  if (byteRemainder === 1) {
-    chunk = bytes[mainLength];
-
-    a = (chunk & 252) >> 2; // 252 = (2^6 - 1) << 2
-
-    // Set the 4 least significant bits to zero
-    b = (chunk & 3) << 4; // 3 = 2^2 - 1
-
-    base64 += chars[a] + chars[b] + "==";
-  } else if (byteRemainder === 2) {
-    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
-
-    a = (chunk & 64512) >> 10; // 64512 = (2^6 - 1) << 10
-    b = (chunk & 1008) >> 4; // 1008 = (2^6 - 1) << 4
-
-    // Set the 2 least significant bits to zero
-    c = (chunk & 15) << 2; // 15 = 2^4 - 1
-
-    base64 += chars[a] + chars[b] + chars[c] + "=";
-  }
-
-  return base64;
-}
-
-async function setCornerRadius(params) {
-  const { nodeId, radius, corners } = params || {};
-
-  if (!nodeId) {
-    throw new Error("Missing nodeId parameter");
-  }
-
-  if (radius === undefined) {
-    throw new Error("Missing radius parameter");
-  }
-
-  const node = await figma.getNodeByIdAsync(nodeId);
-  if (!node) {
-    throw new Error(`Node not found with ID: ${nodeId}`);
-  }
-
-  // Check if node supports corner radius
-  if (!("cornerRadius" in node)) {
-    throw new Error(`Node does not support corner radius: ${nodeId}`);
-  }
-
-  // If corners array is provided, set individual corner radii
-  if (corners && Array.isArray(corners) && corners.length === 4) {
-    if ("topLeftRadius" in node) {
-      // Node supports individual corner radii
-      if (corners[0]) node.topLeftRadius = radius;
-      if (corners[1]) node.topRightRadius = radius;
-      if (corners[2]) node.bottomRightRadius = radius;
-      if (corners[3]) node.bottomLeftRadius = radius;
-    } else {
-      // Node only supports uniform corner radius
-      node.cornerRadius = radius;
-    }
+  // Add the clone to the same parent as the original node
+  if (node.parent) {
+    node.parent.appendChild(clone);
   } else {
-    // Set uniform corner radius
-    node.cornerRadius = radius;
+    figma.currentPage.appendChild(clone);
   }
 
   return {
-    id: node.id,
-    name: node.name,
-    cornerRadius: "cornerRadius" in node ? node.cornerRadius : undefined,
-    topLeftRadius: "topLeftRadius" in node ? node.topLeftRadius : undefined,
-    topRightRadius: "topRightRadius" in node ? node.topRightRadius : undefined,
-    bottomRightRadius:
-      "bottomRightRadius" in node ? node.bottomRightRadius : undefined,
-    bottomLeftRadius:
-      "bottomLeftRadius" in node ? node.bottomLeftRadius : undefined,
+    id: clone.id,
+    name: clone.name,
+    x: "x" in clone ? clone.x : undefined,
+    y: "y" in clone ? clone.y : undefined,
+    width: "width" in clone ? clone.width : undefined,
+    height: "height" in clone ? clone.height : undefined,
   };
 }
 
-async function setTextContent(params) {
-  const { nodeId, text } = params || {};
-
-  if (!nodeId) {
-    throw new Error("Missing nodeId parameter");
-  }
-
-  if (text === undefined) {
-    throw new Error("Missing text parameter");
-  }
-
-  const node = await figma.getNodeByIdAsync(nodeId);
-  if (!node) {
-    throw new Error(`Node not found with ID: ${nodeId}`);
-  }
-
-  if (node.type !== "TEXT") {
-    throw new Error(`Node is not a text node: ${nodeId}`);
+// Import SVG to Figma
+async function importSvgToFigma(params) {
+  if (!params || !params.svgContent) {
+    throw new Error("Missing svgContent parameter");
   }
 
   try {
-    await figma.loadFontAsync(node.fontName);
-
-    await setCharacters(node, text);
-
+    // Check if there's already a node with the name "ecommerce_homepage"
+    const existingNodes = figma.currentPage.findAll(node => node.name === "ecommerce_homepage");
+    
+    // Remove existing nodes with the same name to avoid duplication
+    if (existingNodes.length > 0) {
+      figma.notify(`Removing ${existingNodes.length} existing nodes with name 'ecommerce_homepage'`);
+      existingNodes.forEach(node => node.remove());
+    }
+    
+    // Create a new node from SVG
+    const nodes = figma.createNodeFromSvg(params.svgContent);
+    
+    // Set a consistent name
+    nodes.name = "ecommerce_homepage";
+    
+    // Center the node in the viewport
+    figma.viewport.scrollAndZoomIntoView([nodes]);
+    
+    figma.notify("SVG imported successfully");
+    
     return {
-      id: node.id,
-      name: node.name,
-      characters: node.characters,
-      fontName: node.fontName,
+      id: nodes.id,
+      name: nodes.name,
+      type: nodes.type,
+      width: nodes.width,
+      height: nodes.height
     };
   } catch (error) {
-    throw new Error(`Error setting text content: ${error.message}`);
+    figma.notify(`Error importing SVG: ${error.message}`, { error: true });
+    throw new Error(`Failed to import SVG: ${error.message}`);
   }
+}
+
+// Export current page as SVG function
+async function exportCurrentPageAsSvg(params) {
+  // Get the current page
+  const currentPage = figma.currentPage;
+  
+  // Ensure the page has content
+  if (currentPage.children.length === 0) {
+    throw new Error("Current page is empty. Nothing to export.");
+  }
+  
+  // Export the current page as SVG using SVG_STRING format
+  // This returns a string directly instead of an ArrayBuffer
+  const svgString = await currentPage.exportAsync({
+    format: 'SVG_STRING',
+    svgOutlineText: false, // 保留文本为可编辑状态
+    svgIdAttribute: true
+  });
+  
+  console.log("SVG export complete, string length:", svgString.length);
+  
+  return {
+    svgContent: svgString
+  };
 }
 
 // Initialize settings on load
@@ -1004,6 +541,7 @@ function uniqBy(arr, predicate) {
       .values(),
   ];
 }
+
 const setCharacters = async (node, characters, options) => {
   const fallbackFont = (options && options.fallbackFont) || {
     family: "Inter",
@@ -1205,110 +743,3 @@ const setCharactersWithSmartMatchFont = async (
   });
   return true;
 };
-
-// Add the cloneNode function implementation
-async function cloneNode(params) {
-  const { nodeId, x, y } = params || {};
-
-  if (!nodeId) {
-    throw new Error("Missing nodeId parameter");
-  }
-
-  const node = await figma.getNodeByIdAsync(nodeId);
-  if (!node) {
-    throw new Error(`Node not found with ID: ${nodeId}`);
-  }
-
-  // Clone the node
-  const clone = node.clone();
-
-  // If x and y are provided, move the clone to that position
-  if (x !== undefined && y !== undefined) {
-    if (!("x" in clone) || !("y" in clone)) {
-      throw new Error(`Cloned node does not support position: ${nodeId}`);
-    }
-    clone.x = x;
-    clone.y = y;
-  }
-
-  // Add the clone to the same parent as the original node
-  if (node.parent) {
-    node.parent.appendChild(clone);
-  } else {
-    figma.currentPage.appendChild(clone);
-  }
-
-  return {
-    id: clone.id,
-    name: clone.name,
-    x: "x" in clone ? clone.x : undefined,
-    y: "y" in clone ? clone.y : undefined,
-    width: "width" in clone ? clone.width : undefined,
-    height: "height" in clone ? clone.height : undefined,
-  };
-}
-
-// Import SVG to Figma
-async function importSvgToFigma(params) {
-  if (!params || !params.svgContent) {
-    throw new Error("Missing svgContent parameter");
-  }
-
-  try {
-    // Check if there's already a node with the name "ecommerce_homepage"
-    const existingNodes = figma.currentPage.findAll(node => node.name === "ecommerce_homepage");
-    
-    // Remove existing nodes with the same name to avoid duplication
-    if (existingNodes.length > 0) {
-      figma.notify(`Removing ${existingNodes.length} existing nodes with name 'ecommerce_homepage'`);
-      existingNodes.forEach(node => node.remove());
-    }
-    
-    // Create a new node from SVG
-    const nodes = figma.createNodeFromSvg(params.svgContent);
-    
-    // Set a consistent name
-    nodes.name = "ecommerce_homepage";
-    
-    // Center the node in the viewport
-    figma.viewport.scrollAndZoomIntoView([nodes]);
-    
-    figma.notify("SVG imported successfully");
-    
-    return {
-      id: nodes.id,
-      name: nodes.name,
-      type: nodes.type,
-      width: nodes.width,
-      height: nodes.height
-    };
-  } catch (error) {
-    figma.notify(`Error importing SVG: ${error.message}`, { error: true });
-    throw new Error(`Failed to import SVG: ${error.message}`);
-  }
-}
-
-// Export current page as SVG function
-async function exportCurrentPageAsSvg(params) {
-  // Get the current page
-  const currentPage = figma.currentPage;
-  
-  // Ensure the page has content
-  if (currentPage.children.length === 0) {
-    throw new Error("Current page is empty. Nothing to export.");
-  }
-  
-  // Export the current page as SVG using SVG_STRING format
-  // This returns a string directly instead of an ArrayBuffer
-  const svgString = await currentPage.exportAsync({
-    format: 'SVG_STRING',
-    svgOutlineText: false, // 保留文本为可编辑状态
-    svgIdAttribute: true
-  });
-  
-  console.log("SVG export complete, string length:", svgString.length);
-  
-  return {
-    svgContent: svgString
-  };
-}
