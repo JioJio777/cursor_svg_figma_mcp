@@ -1106,7 +1106,10 @@ server.tool(
       console.log('Requesting Figma to export current page as SVG...');
       const result = await sendCommandToFigma('export_current_page_as_svg', {});
       
-      if (!result || !result.svgContent) {
+      // 添加类型断言解决TypeScript错误
+      const typedResult = result as { svgContent: string };
+      
+      if (!typedResult || !typedResult.svgContent) {
         return {
           content: [
             {
@@ -1117,7 +1120,7 @@ server.tool(
         };
       }
       
-      console.log('Received SVG content from Figma, length:', result.svgContent.length);
+      console.log('Received SVG content from Figma, length:', typedResult.svgContent.length);
       
       // 2. 保存 SVG 到本地文件
       const fs = require('fs');
@@ -1131,7 +1134,7 @@ server.tool(
       console.log('Saving SVG to:', filePath);
       
       // 写入文件
-      fs.writeFileSync(filePath, result.svgContent, 'utf8');
+      fs.writeFileSync(filePath, typedResult.svgContent, 'utf8');
       
       return {
         content: [
@@ -1148,6 +1151,100 @@ server.tool(
           {
             type: "text",
             text: `Error exporting and saving SVG: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Create UI Page Tool
+server.tool(
+  "create_ui_page",
+  "创建新的UI页面(自动生成SVG并更新索引)",
+  {
+    pageName: z.string().describe("页面名称")
+  },
+  async ({ pageName }) => {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      
+      // 获取项目根目录
+      const currentDir = __dirname;
+      const projectRoot = path.resolve(currentDir, '..', '..');
+      
+      // 生成文件名（使用页面名称的小写版本并替换空格为下划线）
+      const fileName = `${pageName.toLowerCase().replace(/\s+/g, '_')}.svg`;
+      const filePath = path.join(projectRoot, fileName);
+      
+      // 提示词 - 告诉AI如何创建SVG
+      const promptForAI = `
+请创建一个名为 "${pageName}" 的UI页面:
+
+1. 文件规范:
+   - 使用SVG格式
+   - 确保SVG包含适当的ID属性和元数据
+   - 保存在项目根目录，文件名: ${fileName}
+
+2. 索引文件更新:
+   - 检查项目根目录中是否存在 page_index.json
+   - 如不存在，创建基本结构
+   - 添加新页面的记录
+
+3. 同步到Figma:
+   - 创建完SVG文件后，使用现有的import_svg_to_figma工具将文件同步到Figma
+   - 获取Figma返回的ID并添加到索引
+      `;
+      
+      // 添加索引文件功能
+      const indexFilePath = path.join(projectRoot, 'page_index.json');
+      let indexData = { pages: [] };
+      
+      // 检查索引文件是否存在
+      if (fs.existsSync(indexFilePath)) {
+        try {
+          const indexContent = fs.readFileSync(indexFilePath, 'utf8');
+          indexData = JSON.parse(indexContent);
+        } catch (error) {
+          console.error('Error reading index file:', error);
+        }
+      }
+      
+      // 建议将新页面添加到索引
+      const pageEntry = {
+        name: pageName,
+        svgFile: fileName,
+        createdAt: new Date().toISOString()
+      };
+      
+      const updatedIndexData = {
+        pages: [...indexData.pages, pageEntry]
+      };
+      
+      // 生成保存索引文件的指导
+      const indexSaveGuide = `
+索引文件示例结构:
+${JSON.stringify(updatedIndexData, null, 2)}
+
+请在生成SVG文件后，按上述格式更新或创建索引文件。
+      `;
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: promptForAI + indexSaveGuide
+          }
+        ]
+      };
+    } catch (error) {
+      console.error('Error in create_ui_page:', error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `创建UI页面时出错: ${error instanceof Error ? error.message : String(error)}`
           }
         ]
       };
