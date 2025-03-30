@@ -1020,11 +1020,13 @@ server.tool(
 server.tool(
   "import_svg_to_figma",
   "Import an SVG file to Figma",
-  {},
-  async () => {
+  {
+    filePath: z.string().describe("SVG文件路径，相对于项目根目录").optional()
+  },
+  async ({ filePath }) => {
     try {
-      // Fixed file path for MVP
-      const filePath = "ecommerce_homepage.svg";
+      // 使用提供的文件路径，如果没有则使用默认值
+      const svgFilePath = filePath || "default_svg.svg";
       
       // Read the SVG file
       let svgContent;
@@ -1036,7 +1038,7 @@ server.tool(
         // Get the project root directory (two levels up from current file)
         const currentDir = __dirname;
         const projectRoot = path.resolve(currentDir, '..', '..');
-        const fullPath = path.join(projectRoot, filePath);
+        const fullPath = path.join(projectRoot, svgFilePath);
         
         console.log(`Current directory: ${currentDir}`);
         console.log(`Project root: ${projectRoot}`);
@@ -1069,9 +1071,18 @@ server.tool(
         };
       }
       
+      // 获取文件名（不带扩展名）作为页面名称
+      const path = require('path');
+      const pageName = path.basename(svgFilePath, '.svg');
+      
       // Send the SVG content to Figma
       console.log('Sending SVG content to Figma...');
-      const result = await sendCommandToFigma('import_svg', { svgContent });
+      console.log(`Using page name: ${pageName}`);
+      const result = await sendCommandToFigma('import_svg', { 
+        svgContent,
+        filePath: svgFilePath,
+        pageName
+      });
       
       return {
         content: [
@@ -1126,10 +1137,14 @@ server.tool(
       const fs = require('fs');
       const path = require('path');
       
+      // 使用时间戳生成文件名
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const fileName = `figma_export_${timestamp}.svg`;
+      
       // 构建文件路径
       const currentDir = __dirname;
       const projectRoot = path.resolve(currentDir, '..', '..');
-      const filePath = path.join(projectRoot, 'ecommerce_homepage.svg');
+      const filePath = path.join(projectRoot, fileName);
       
       console.log('Saving SVG to:', filePath);
       
@@ -1184,7 +1199,7 @@ server.tool(
 
 1. 文件规范:
    - 使用SVG格式
-   - 确保SVG包含适当的ID属性和元数据
+   - 确保SVG包含适当的ID属性和元数据，建议将ID属性设为："${pageName.toLowerCase().replace(/\s+/g, '-')}"
    - 保存在项目根目录，文件名: ${fileName}
 
 2. 索引文件更新:
@@ -1193,7 +1208,8 @@ server.tool(
    - 添加新页面的记录
 
 3. 同步到Figma:
-   - 创建完SVG文件后，使用现有的import_svg_to_figma工具将文件同步到Figma
+   - 创建完SVG文件后，使用以下命令同步到Figma:
+     mcp_TalkToFigma_import_svg_to_figma(filePath: "${fileName}")
    - 获取Figma返回的ID并添加到索引
       `;
       

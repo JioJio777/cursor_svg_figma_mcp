@@ -71,8 +71,9 @@ figma.ui.onmessage = async (msg) => {
           
           console.log("SVG export complete, string length:", svgString.length);
           
-          // Send the SVG data back to the UI for WebSocket transmission
-          const fileName = msg.fileName || "ecommerce_homepage.svg";
+          // 使用页面名称或提供的文件名，而不是硬编码的文件名
+          // 如果提供了文件名，使用它；否则基于页面名称生成文件名
+          const fileName = msg.fileName || `${currentPage.name.toLowerCase().replace(/\s+/g, '_')}.svg`;
           console.log("Sending SVG data to UI with filename:", fileName);
           
           figma.ui.postMessage({
@@ -81,7 +82,7 @@ figma.ui.onmessage = async (msg) => {
             fileName: fileName
           });
           
-          figma.notify("Page exported as SVG");
+          figma.notify(`Page exported as SVG: ${fileName}`);
         } catch (error) {
           console.error("Error exporting page as SVG:", error);
           figma.ui.postMessage({
@@ -447,25 +448,52 @@ async function importSvgToFigma(params) {
   }
 
   try {
-    // Check if there's already a node with the name "ecommerce_homepage"
-    const existingNodes = figma.currentPage.findAll(node => node.name === "ecommerce_homepage");
+    // 确定页面名称：优先使用参数中提供的名称，否则尝试从SVG内容中提取id，最后使用默认名称
+    let pageName = "svg_import";
+    
+    // 使用参数中的pageName（如果提供）
+    if (params.pageName) {
+      pageName = params.pageName;
+      console.log("Using pageName from params:", pageName);
+    } 
+    // 尝试从SVG内容中提取id属性
+    else if (params.svgContent.includes('id="')) {
+      const idMatch = params.svgContent.match(/id="([^"]+)"/);
+      if (idMatch && idMatch[1]) {
+        pageName = idMatch[1];
+        console.log("Using ID from SVG content:", pageName);
+      }
+    }
+    // 尝试从参数中的filePath提取文件名（如果提供）
+    else if (params.filePath) {
+      // 从文件路径中提取文件名（不带扩展名）
+      const fileNameMatch = params.filePath.match(/([^\/\\]+)\.svg$/i);
+      if (fileNameMatch && fileNameMatch[1]) {
+        pageName = fileNameMatch[1];
+        console.log("Using filename from filePath:", pageName);
+      }
+    }
+    
+    // 检查是否已有同名节点，如果有则移除
+    const existingNodes = figma.currentPage.findAll(node => node.name === pageName);
     
     // Remove existing nodes with the same name to avoid duplication
     if (existingNodes.length > 0) {
-      figma.notify(`Removing ${existingNodes.length} existing nodes with name 'ecommerce_homepage'`);
+      figma.notify(`Removing ${existingNodes.length} existing nodes with name '${pageName}'`);
       existingNodes.forEach(node => node.remove());
     }
     
     // Create a new node from SVG
     const nodes = figma.createNodeFromSvg(params.svgContent);
     
-    // Set a consistent name
-    nodes.name = "ecommerce_homepage";
+    // 设置节点名称为确定的页面名称
+    nodes.name = pageName;
+    console.log("Set node name to:", nodes.name);
     
     // Center the node in the viewport
     figma.viewport.scrollAndZoomIntoView([nodes]);
     
-    figma.notify("SVG imported successfully");
+    figma.notify(`SVG imported successfully as '${pageName}'`);
     
     return {
       id: nodes.id,

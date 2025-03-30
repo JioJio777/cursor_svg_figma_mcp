@@ -161,7 +161,9 @@ const server = Bun.serve({
               
               // 使用当前工作目录的绝对路径
               const projectRoot = process.cwd();
-              const filePath = path.resolve(projectRoot, fileName || "ecommerce_homepage.svg");
+              // 如果没有提供文件名，使用带时间戳的默认文件名
+              const defaultFileName = `figma_export_${new Date().toISOString().replace(/[:.]/g, '-')}.svg`;
+              const filePath = path.resolve(projectRoot, fileName || defaultFileName);
               
               console.log('Saving SVG to absolute path:', filePath);
               console.log('Current working directory:', projectRoot);

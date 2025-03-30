@@ -215,7 +215,7 @@
             Export Current Page to SVG File
           </button>
           <p style="font-size: 12px; color: #999999; margin-top: 8px;">
-            Exports the current page to ecommerce_homepage.svg
+            Exports the current page as an SVG file with a timestamp
           </p>
           <!-- Add status log display -->
           <div id="export-status" style="margin-top: 8px; border: 1px solid #e0e0e0; padding: 8px; border-radius: 4px; max-height: 120px; overflow-y: auto; font-size: 12px; background-color: #f5f5f5;">
@@ -670,19 +670,23 @@
           return;
         }
         
+        // 使用时间戳生成唯一的文件名
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const fileName = `figma_export_${timestamp}.svg`;
+        
         // Show loading status
-        logStatus(`Starting export to channel: ${state.channel}...`);
+        logStatus(`Starting export to channel: ${state.channel} as ${fileName}...`);
         updateConnectionStatus(true, `Exporting current page as SVG to channel: ${state.channel}...`);
         
         // Log export attempt
-        console.log("Attempting to export SVG with channel:", state.channel);
+        console.log("Attempting to export SVG with channel:", state.channel, "fileName:", fileName);
         
         // Send request to Figma to export the current page
-        logStatus("Requesting SVG from Figma...");
+        logStatus(`Requesting SVG from Figma as ${fileName}...`);
         parent.postMessage({ 
           pluginMessage: { 
             type: "export-page-as-svg", 
-            fileName: "ecommerce_homepage.svg",
+            fileName: fileName,
             channel: state.channel 
           } 
         }, '*');
