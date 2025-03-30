@@ -1178,20 +1178,38 @@ server.tool(
   "create_ui_page",
   "创建新的UI页面(自动生成SVG并更新索引)",
   {
-    pageName: z.string().describe("页面名称")
+    pageName: z.string().describe("页面名称"),
+    pageType: z.string().optional().describe("页面类型")
   },
-  async ({ pageName }) => {
+  async ({ pageName, pageType = "general" }) => {
     try {
       const fs = require('fs');
       const path = require('path');
+      const { v4: uuidv4 } = require('uuid');
       
       // 获取项目根目录
       const currentDir = __dirname;
       const projectRoot = path.resolve(currentDir, '..', '..');
       
-      // 生成文件名（使用页面名称的小写版本并替换空格为下划线）
-      const fileName = `${pageName.toLowerCase().replace(/\s+/g, '_')}.svg`;
-      const filePath = path.join(projectRoot, fileName);
+      // 创建svg_pages目录（如果不存在）
+      const svgPagesDir = path.join(projectRoot, 'svg_pages');
+      if (!fs.existsSync(svgPagesDir)) {
+        fs.mkdirSync(svgPagesDir, { recursive: true });
+      }
+      
+      // 生成唯一ID
+      const pageId = uuidv4().substring(0, 8);
+      
+      // 生成文件名（使用页面名称的小写版本并替换空格为下划线，并添加ID）
+      const fileBaseName = pageName.toLowerCase().replace(/\s+/g, '_');
+      const fileName = `${fileBaseName}_${pageId}.svg`;
+      const relativeFilePath = path.join('svg_pages', fileName);
+      const absoluteFilePath = path.join(projectRoot, relativeFilePath);
+      
+      // 索引文件保存在svg_pages目录下
+      const indexFileName = 'page_index.json';
+      const indexRelativePath = path.join('svg_pages', indexFileName);
+      const indexFilePath = path.join(projectRoot, indexRelativePath);
       
       // 提示词 - 告诉AI如何创建SVG
       const promptForAI = `
@@ -1199,22 +1217,19 @@ server.tool(
 
 1. 文件规范:
    - 使用SVG格式
-   - 确保SVG包含适当的ID属性和元数据，建议将ID属性设为："${pageName.toLowerCase().replace(/\s+/g, '-')}"
-   - 保存在项目根目录，文件名: ${fileName}
+   - 确保SVG包含适当的ID属性和元数据，建议将ID属性设为："page-${fileBaseName}-${pageId}"
+   - 文件将保存在 svg_pages 目录中，文件名: ${fileName}
 
 2. 索引文件更新:
-   - 检查项目根目录中是否存在 page_index.json
-   - 如不存在，创建基本结构
-   - 添加新页面的记录
+   - 索引文件位置: ${indexRelativePath}
+   - 新页面的记录将包含id、name、type、svgFile和createdAt字段
 
 3. 同步到Figma:
    - 创建完SVG文件后，使用以下命令同步到Figma:
-     mcp_TalkToFigma_import_svg_to_figma(filePath: "${fileName}")
-   - 获取Figma返回的ID并添加到索引
+     mcp_TalkToFigma_import_svg_to_figma(filePath: "${relativeFilePath}")
       `;
       
       // 添加索引文件功能
-      const indexFilePath = path.join(projectRoot, 'page_index.json');
       let indexData = { pages: [] };
       
       // 检查索引文件是否存在
@@ -1227,10 +1242,12 @@ server.tool(
         }
       }
       
-      // 建议将新页面添加到索引
+      // 创建新页面的索引条目
       const pageEntry = {
+        id: pageId,
         name: pageName,
-        svgFile: fileName,
+        type: pageType,
+        svgFile: fileName, // 只保存文件名，因为索引和SVG都在同一目录下
         createdAt: new Date().toISOString()
       };
       
@@ -1243,7 +1260,8 @@ server.tool(
 索引文件示例结构:
 ${JSON.stringify(updatedIndexData, null, 2)}
 
-请在生成SVG文件后，按上述格式更新或创建索引文件。
+请在生成SVG文件后，按上述格式更新或创建索引文件。请确保在SVG根元素上使用ID: "page-${fileBaseName}-${pageId}"
+并将索引文件保存在svg_pages目录下。
       `;
       
       return {
