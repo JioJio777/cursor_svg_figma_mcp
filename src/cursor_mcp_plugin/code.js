@@ -154,6 +154,8 @@ async function handleCommand(command, params) {
       return await importSvgToFigma(params);
     case "export_current_page_as_svg":
       return await exportCurrentPageAsSvg(params);
+    case "export_node_as_svg":
+      return await exportNodeAsSvg(params);
     default:
       throw new Error(`Unknown command: ${command}`);
   }
@@ -530,6 +532,35 @@ async function exportCurrentPageAsSvg(params) {
   
   return {
     svgContent: svgString
+  };
+}
+
+// Export node as SVG function
+async function exportNodeAsSvg(params) {
+  const { nodeId } = params;
+  
+  if (!nodeId) {
+    throw new Error("Missing nodeId parameter");
+  }
+
+  const node = await figma.getNodeByIdAsync(nodeId);
+  if (!node) {
+    throw new Error(`Node not found with ID: ${nodeId}`);
+  }
+
+  console.log(`Exporting node "${node.name}" (${nodeId}) as SVG...`);
+  
+  const svgString = await node.exportAsync({
+    format: 'SVG_STRING',
+    svgOutlineText: false, // 保留文本为可编辑状态
+    svgIdAttribute: true   // 保留ID属性
+  });
+
+  console.log(`Successfully exported node as SVG, content length: ${svgString.length}`);
+  
+  return {
+    svgContent: svgString,
+    nodeName: node.name
   };
 }
 

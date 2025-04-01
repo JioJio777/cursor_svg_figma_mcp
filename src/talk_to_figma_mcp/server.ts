@@ -821,6 +821,7 @@ type FigmaCommand =
   | 'clone_node'
   | 'import_svg'
   | 'export_current_page_as_svg'
+  | 'export_node_as_svg'
   // Removed the following commands
   // | 'create_rectangle'
   // | 'create_frame'
@@ -1028,16 +1029,16 @@ server.tool(
       // 使用提供的文件路径，如果没有则使用默认值
       const svgFilePath = filePath || "default_svg.svg";
       
+      // Get the project root directory (two levels up from current file)
+      const fs = require('fs');
+      const path = require('path');
+      const currentDir = __dirname;
+      const projectRoot = path.resolve(currentDir, '..', '..');
+      
       // Read the SVG file
       let svgContent;
       try {
         // Use Node.js fs module
-        const fs = require('fs');
-        const path = require('path');
-        
-        // Get the project root directory (two levels up from current file)
-        const currentDir = __dirname;
-        const projectRoot = path.resolve(currentDir, '..', '..');
         const fullPath = path.join(projectRoot, svgFilePath);
         
         console.log(`Current directory: ${currentDir}`);
@@ -1072,7 +1073,6 @@ server.tool(
       }
       
       // 获取文件名（不带扩展名）作为页面名称
-      const path = require('path');
       const pageName = path.basename(svgFilePath, '.svg');
       
       // Send the SVG content to Figma
@@ -1082,13 +1082,57 @@ server.tool(
         svgContent,
         filePath: svgFilePath,
         pageName
-      });
+      }) as { id: string; name: string; type: string; width: number; height: number };
+      
+      // 提取文件名，用于在page_index.json中查找对应条目
+      const svgFileName = path.basename(svgFilePath);
+      
+      // 构建page_index.json的路径
+      const indexDir = path.dirname(svgFilePath);
+      const indexPath = path.join(projectRoot, indexDir, 'page_index.json');
+      
+      // 尝试更新page_index.json，添加figmaNodeId
+      let indexUpdateResult = '';
+      try {
+        // 检查index文件是否存在
+        if (require('fs').existsSync(indexPath)) {
+          // 读取现有的JSON数据
+          const indexData = JSON.parse(require('fs').readFileSync(indexPath, 'utf8'));
+          
+          // 查找匹配SVG文件名的条目
+          let updated = false;
+          if (indexData && indexData.pages && Array.isArray(indexData.pages)) {
+            for (let i = 0; i < indexData.pages.length; i++) {
+              const page = indexData.pages[i];
+              if (page.svgFile === svgFileName) {
+                // 更新figmaNodeId
+                indexData.pages[i].figmaNodeId = result.id;
+                updated = true;
+                break;
+              }
+            }
+          }
+          
+          if (updated) {
+            // 写回更新后的JSON
+            require('fs').writeFileSync(indexPath, JSON.stringify(indexData, null, 2), 'utf8');
+            indexUpdateResult = `Updated figmaNodeId to ${result.id} in page_index.json`;
+          } else {
+            indexUpdateResult = 'SVG entry not found in page_index.json, no update made';
+          }
+        } else {
+          indexUpdateResult = 'page_index.json not found, no update made';
+        }
+      } catch (error) {
+        console.error('Error updating page_index.json:', error);
+        indexUpdateResult = `Error updating page_index.json: ${error instanceof Error ? error.message : String(error)}`;
+      }
       
       return {
         content: [
           {
             type: "text",
-            text: `SVG file imported successfully: ${JSON.stringify(result)}`
+            text: `SVG file imported successfully: ${JSON.stringify(result)}\n${indexUpdateResult}`
           }
         ]
       };
@@ -1279,6 +1323,60 @@ ${JSON.stringify(updatedIndexData, null, 2)}
           {
             type: "text",
             text: `创建UI页面时出错: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Export Node as SVG Tool
+server.tool(
+  "export_node_as_svg",
+  "Export a specific node as SVG from Figma",
+  {
+    nodeId: z.string().describe("The ID of the node to export as SVG")
+  },
+  async ({ nodeId }) => {
+    try {
+      const result = await sendCommandToFigma('export_node_as_svg', { nodeId }) as {
+        svgContent: string;
+        nodeName: string;
+      };
+      
+      // 直接使用节点名称作为文件名
+      const fileName = `${result.nodeName}.svg`;
+      
+      // 保存SVG文件到svg_pages目录
+      const fs = require('fs');
+      const path = require('path');
+      const projectRoot = path.resolve(__dirname, '..', '..');
+      const svgPagesDir = path.join(projectRoot, 'svg_pages');
+      
+      // 确保svg_pages目录存在
+      if (!fs.existsSync(svgPagesDir)) {
+        fs.mkdirSync(svgPagesDir, { recursive: true });
+      }
+      
+      const filePath = path.join(svgPagesDir, fileName);
+      
+      // 写入文件
+      fs.writeFileSync(filePath, result.svgContent, 'utf8');
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Successfully exported node "${result.nodeName}" as SVG and saved to: ${filePath}`
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error exporting node as SVG: ${error instanceof Error ? error.message : String(error)}`
           }
         ]
       };
