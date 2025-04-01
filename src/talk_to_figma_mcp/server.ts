@@ -1035,6 +1035,48 @@ server.tool(
       const currentDir = __dirname;
       const projectRoot = path.resolve(currentDir, '..', '..');
       
+      // 提取文件名，用于在page_index.json中查找对应条目
+      const svgFileName = path.basename(svgFilePath);
+      
+      // 构建page_index.json的路径
+      const indexDir = path.dirname(svgFilePath);
+      const indexPath = path.join(projectRoot, indexDir, 'page_index.json');
+      
+      // 检查是否存在旧的figmaNodeId并删除
+      let oldNodeDeleted = false;
+      let oldNodeId = '';
+      try {
+        // 检查index文件是否存在
+        if (fs.existsSync(indexPath)) {
+          // 读取现有的JSON数据
+          const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+          
+          // 查找匹配SVG文件名的条目
+          if (indexData && indexData.pages && Array.isArray(indexData.pages)) {
+            for (const page of indexData.pages) {
+              if (page.svgFile === svgFileName && page.figmaNodeId) {
+                oldNodeId = page.figmaNodeId;
+                console.log(`Found existing figmaNodeId: ${oldNodeId}, attempting to delete...`);
+                
+                // 删除原节点
+                try {
+                  await sendCommandToFigma('delete_node', { nodeId: oldNodeId });
+                  oldNodeDeleted = true;
+                  console.log(`Successfully deleted node: ${oldNodeId}`);
+                } catch (deleteError) {
+                  console.error(`Error deleting node ${oldNodeId}:`, deleteError);
+                  // 继续执行，即使删除失败也尝试导入新节点
+                }
+                break;
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error checking for existing node:', error);
+        // 继续执行，即使检查失败也尝试导入新节点
+      }
+      
       // Read the SVG file
       let svgContent;
       try {
@@ -1084,20 +1126,13 @@ server.tool(
         pageName
       }) as { id: string; name: string; type: string; width: number; height: number };
       
-      // 提取文件名，用于在page_index.json中查找对应条目
-      const svgFileName = path.basename(svgFilePath);
-      
-      // 构建page_index.json的路径
-      const indexDir = path.dirname(svgFilePath);
-      const indexPath = path.join(projectRoot, indexDir, 'page_index.json');
-      
       // 尝试更新page_index.json，添加figmaNodeId
       let indexUpdateResult = '';
       try {
         // 检查index文件是否存在
-        if (require('fs').existsSync(indexPath)) {
+        if (fs.existsSync(indexPath)) {
           // 读取现有的JSON数据
-          const indexData = JSON.parse(require('fs').readFileSync(indexPath, 'utf8'));
+          const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
           
           // 查找匹配SVG文件名的条目
           let updated = false;
@@ -1115,7 +1150,7 @@ server.tool(
           
           if (updated) {
             // 写回更新后的JSON
-            require('fs').writeFileSync(indexPath, JSON.stringify(indexData, null, 2), 'utf8');
+            fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2), 'utf8');
             indexUpdateResult = `Updated figmaNodeId to ${result.id} in page_index.json`;
           } else {
             indexUpdateResult = 'SVG entry not found in page_index.json, no update made';
@@ -1128,11 +1163,13 @@ server.tool(
         indexUpdateResult = `Error updating page_index.json: ${error instanceof Error ? error.message : String(error)}`;
       }
       
+      const deletionMessage = oldNodeDeleted ? `Deleted previous node: ${oldNodeId}. ` : oldNodeId ? `Failed to delete previous node: ${oldNodeId}. ` : '';
+      
       return {
         content: [
           {
             type: "text",
-            text: `SVG file imported successfully: ${JSON.stringify(result)}\n${indexUpdateResult}`
+            text: `${deletionMessage}SVG file imported successfully: ${JSON.stringify(result)}\n${indexUpdateResult}`
           }
         ]
       };
