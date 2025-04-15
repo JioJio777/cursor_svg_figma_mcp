@@ -1,185 +1,99 @@
-# Cursor Talk to Figma MCP
+# SVG-Figma 双向同步桥接工具
 
-This project implements a Model Context Protocol (MCP) integration between Cursor AI and Figma, allowing Cursor to communicate with Figma for reading designs and modifying them programmatically.
+一个实现SVG文件与Figma设计之间双向同步的工具。它允许您以SVG格式创建UI页面，并将它们导入到Figma中进行编辑，同时也可以将Figma中的修改导出回SVG文件。
 
-https://github.com/user-attachments/assets/129a14d2-ed73-470f-9a4c-2240b2a4885c
+## 演示视频
 
-## Project Structure
+查看我们的演示视频，了解工具的基本功能和使用方法：
 
-- `src/talk_to_figma_mcp/` - TypeScript MCP server for Figma integration
-- `src/cursor_mcp_plugin/` - Figma plugin for communicating with Cursor
-- `src/socket.ts` - WebSocket server that facilitates communication between the MCP server and Figma plugin
+[![演示视频](https://i0.hdslb.com/bfs/archive/video_image_cover.jpg)](https://www.bilibili.com/video/BV1rodZYLEbr/)
 
-## Get Started
+🔗 [在哔哩哔哩观看](https://www.bilibili.com/video/BV1rodZYLEbr/)
 
-1. Install Bun if you haven't already:
+## 功能特点
+
+- 通过频道系统实现与Figma的实时通信
+- 以SVG格式创建复杂UI界面
+- 将SVG文件无缝导入Figma
+- 将Figma中的修改导出回本地SVG文件
+- 自动维护设计页面索引系统
+- 支持多种类型的UI页面创建
+
+## 安装
+
+```bash
+# 克隆仓库
+git clone https://github.com/yourusername/cursor_svg_figma_mcp.git
+cd cursor_svg_figma_mcp
+
+# 安装依赖
+npm install
+```
+
+## 快速开始
+
+首先，安装Bun（如果尚未安装）：
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
 ```
 
-2. Run setup, this will also install MCP in your Cursor's active project
+运行setup，这将同时在您的Cursor活动项目中安装MCP：
 
 ```bash
 bun setup
 ```
 
-3. Start the Websocket server
+启动Websocket服务器：
 
 ```bash
 bun socket
 ```
 
-4. MCP server
+### 配置Figma插件
 
-```bash
-bunx cursor-talk-to-figma-mcp
+1. 下载Figma客户端并登录
+2. 创建一个新文件或打开现有文件
+3. 点击菜单中的"Plugins" > "Development" > "Import plugin from manifest..."
+
+![Figma插件导入](images/figma_import_plugin.png)
+
+4. 选择项目中的manifest.json文件
+5. 导入成功后，点击"Run"使用插件
+6. 在插件界面中点击"Connect"连接到Websocket服务器
+
+
+
+## 目录结构
+
+```
+├── svg_pages/                # SVG文件和索引存储目录
+│   ├── page_index.json       # 页面索引文件
+│   ├── 页面名称_ID.svg       # SVG页面文件
+├── src/                      # 源代码目录
+├── scripts/                  # 辅助脚本
+├── images/                   # 图片资源
 ```
 
-5. Install [Figma Plugin](#figma-plugin)
+## 工作流程
 
-# Quick Video Tutorial
+1. 创建新的UI页面或加入现有频道
+2. 编辑SVG或将SVG导入Figma进行编辑
+3. 在Figma中进行设计修改
+4. 将修改从Figma导出回SVG文件
+5. 通过索引系统管理所有UI页面
 
-[![image](images/tutorial.jpg)](https://www.linkedin.com/posts/sonnylazuardi_just-wanted-to-share-my-latest-experiment-activity-7307821553654657024-yrh8)
+## 技术细节
 
-## Manual Setup and Installation
+- 使用SVG作为设计文件的基础格式
+- 通过MCP（消息通道协议）实现与Figma的通信
+- 自动生成唯一ID以关联SVG文件和Figma节点
+- 索引系统跟踪所有页面及其对应的Figma节点ID
 
-### MCP Server: Integration with Cursor
-
-Add the server to your Cursor MCP configuration in `~/.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "TalkToFigma": {
-      "command": "bunx",
-      "args": ["cursor-talk-to-figma-mcp"]
-    }
-  }
-}
-```
-
-### WebSocket Server
-
-Start the WebSocket server:
-
-```bash
-bun socket
-```
-
-### Figma Plugin
-
-1. In Figma, go to Plugins > Development > New Plugin
-2. Choose "Link existing plugin"
-3. Select the `src/cursor_mcp_plugin/manifest.json` file
-4. The plugin should now be available in your Figma development plugins
-
-## Windows + WSL Guide
-
-1. Install bun via powershell
-
-```bash
-powershell -c "irm bun.sh/install.ps1|iex"
-```
-
-2. Uncomment the hostname `0.0.0.0` in `src/socket.ts`
-
-```typescript
-// uncomment this to allow connections in windows wsl
-hostname: "0.0.0.0",
-```
-
-3. Start the websocket
-
-```bash
-bun socket
-```
-
-## Usage
-
-1. Start the WebSocket server
-2. Install the MCP server in Cursor
-3. Open Figma and run the Cursor MCP Plugin
-4. Connect the plugin to the WebSocket server by joining a channel using `join_channel`
-5. Use Cursor to communicate with Figma using the MCP tools
-
-## MCP Tools
-
-The MCP server provides the following tools for interacting with Figma:
-
-### Document & Selection
-
-- `get_document_info` - Get information about the current Figma document
-- `get_selection` - Get information about the current selection
-- `get_node_info` - Get detailed information about a specific node
-- `get_nodes_info` - Get detailed information about multiple nodes by providing an array of node IDs
-
-### Creating Elements
-
-- `create_rectangle` - Create a new rectangle with position, size, and optional name
-- `create_frame` - Create a new frame with position, size, and optional name
-- `create_text` - Create a new text node with customizable font properties
-
-### Modifying text content
-
-- `set_text_content` - Set the text content of an existing text node
-
-### Styling
-
-- `set_fill_color` - Set the fill color of a node (RGBA)
-- `set_stroke_color` - Set the stroke color and weight of a node
-- `set_corner_radius` - Set the corner radius of a node with optional per-corner control
-
-### Layout & Organization
-
-- `move_node` - Move a node to a new position
-- `resize_node` - Resize a node with new dimensions
-- `delete_node` - Delete a node
-- `clone_node` - Create a copy of an existing node with optional position offset
-
-### Components & Styles
-
-- `get_styles` - Get information about local styles
-- `get_local_components` - Get information about local components
-- `get_team_components` - Get information about team components
-- `create_component_instance` - Create an instance of a component
-
-### Export & Advanced
-
-- `export_node_as_image` - Export a node as an image (PNG, JPG, SVG, or PDF)
-- `execute_figma_code` - Execute arbitrary JavaScript code in Figma (use with caution)
-
-### Connection Management
-
-- `join_channel` - Join a specific channel to communicate with Figma
-
-## Development
-
-### Building the Figma Plugin
-
-1. Navigate to the Figma plugin directory:
-
-   ```
-   cd src/cursor_mcp_plugin
-   ```
-
-2. Edit code.js and ui.html
-
-## Best Practices
-
-When working with the Figma MCP:
-
-1. Always join a channel before sending commands
-2. Get document overview using `get_document_info` first
-3. Check current selection with `get_selection` before modifications
-4. Use appropriate creation tools based on needs:
-   - `create_frame` for containers
-   - `create_rectangle` for basic shapes
-   - `create_text` for text elements
-5. Verify changes using `get_node_info`
-6. Use component instances when possible for consistency
-7. Handle errors appropriately as all commands can throw exceptions
-
-## License
+## 许可证
 
 MIT
+
+## 贡献
+
+欢迎提交Pull Request或创建Issue来改进此项目。
